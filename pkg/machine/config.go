@@ -113,6 +113,8 @@ type RemoveOptions struct {
 	SaveIgnition bool
 }
 
+type InspectOptions struct{}
+
 type VM interface {
 	Init(opts InitOptions) (bool, error)
 	Remove(name string, opts RemoveOptions) (string, func() error, error)
