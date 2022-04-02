@@ -80,7 +80,7 @@ func cleanup(cmd *cobra.Command, args []string) error {
 		// is via syslog.
 		// As such, we need to logrus.Errorf our errors to ensure they
 		// are properly printed if --syslog is set.
-		logrus.Errorf("Running container cleanup: %v", err)
+		logrus.Errorf("isRunning container cleanup: %v", err)
 		return err
 	}
 	for _, r := range responses {

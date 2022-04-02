@@ -24,6 +24,10 @@ var (
 		PersistentPreRunE:  noOp,
 		PersistentPostRunE: noOp,
 		RunE:               validate.SubCommandExists,
+		Annotations: map[string]string{
+			registry.UnshareNSRequired: "",
+			registry.ParentNSRequired:  "",
+		},
 	}
 )
 

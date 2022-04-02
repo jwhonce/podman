@@ -33,14 +33,14 @@ type InitOptions struct {
 	UID string
 }
 
-type QemuMachineStatus = string
+type MachineStatus = string
 
 const (
 	// Running indicates the qemu vm is running.
-	Running QemuMachineStatus = "running"
+	Running MachineStatus = "running"
 	// Stopped indicates the vm has stopped.
-	Stopped            QemuMachineStatus = "stopped"
-	DefaultMachineName string            = "podman-machine-default"
+	Stopped            MachineStatus = "stopped"
+	DefaultMachineName string        = "podman-machine-default"
 )
 
 type Provider interface {
@@ -121,6 +121,7 @@ type VM interface {
 	Set(name string, opts SetOptions) error
 	SSH(name string, opts SSHOptions) error
 	Start(name string, opts StartOptions) error
+	State() (MachineStatus, error)
 	Stop(name string, opts StopOptions) error
 }
 
@@ -128,6 +129,15 @@ type DistributionDownload interface {
 	HasUsableCache() (bool, error)
 	Get() *Download
 }
+
+type InspectInfo struct {
+	State MachineStatus
+	VM
+}
+
+//func (s *InspectInfo) State() (MachineStatus, error) {
+//	return s.State, nil
+//}
 
 func (rc RemoteConnectionType) MakeSSHURL(host, path, port, userName string) url.URL {
 	//TODO Should this function have input verification?

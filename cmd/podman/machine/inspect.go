@@ -10,6 +10,7 @@ import (
 	"github.com/containers/podman/v4/cmd/podman/registry"
 	"github.com/containers/podman/v4/cmd/podman/utils"
 	"github.com/containers/podman/v4/libpod/define"
+	"github.com/containers/podman/v4/pkg/machine"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -44,9 +45,8 @@ func init() {
 func inspect(cmd *cobra.Command, args []string) error {
 	var ( //nolint:prealloc
 		errs utils.OutputErrors
-		vms  []interface{}
+		vms  []machine.InspectInfo
 	)
-
 	provider := getSystemDefaultProvider()
 	for _, vmName := range args {
 		vm, err := provider.LoadVMByName(vmName)
@@ -54,7 +54,17 @@ func inspect(cmd *cobra.Command, args []string) error {
 			errs = append(errs, err)
 			continue
 		}
-		vms = append(vms, vm)
+
+		state, err := vm.State()
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+		ii := machine.InspectInfo{
+			State: state,
+			VM:    vm,
+		}
+		vms = append(vms, ii)
 	}
 	if len(inspectFlag.format) > 0 {
 		// need jhonce to work his template magic
@@ -66,7 +76,7 @@ func inspect(cmd *cobra.Command, args []string) error {
 	return errs.PrintErrors()
 }
 
-func printJSON(data []interface{}) error {
+func printJSON(data []machine.InspectInfo) error {
 	enc := json.NewEncoder(os.Stdout)
 	// by default, json marshallers will force utf=8 from
 	// a string. this breaks healthchecks that use <,>, &&.

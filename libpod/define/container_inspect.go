@@ -202,7 +202,7 @@ type InspectMount struct {
 type InspectContainerState struct {
 	OciVersion     string             `json:"OciVersion"`
 	Status         string             `json:"Status"`
-	Running        bool               `json:"Running"`
+	Running        bool               `json:"isRunning"`
 	Paused         bool               `json:"Paused"`
 	Restarting     bool               `json:"Restarting"` // TODO
 	OOMKilled      bool               `json:"OOMKilled"`
@@ -714,7 +714,7 @@ type InspectExecSession struct {
 	// Always set to true if the exec session created a TTY.
 	OpenStdout bool `json:"OpenStdout"`
 	// Running is whether the exec session is running.
-	Running bool `json:"Running"`
+	Running bool `json:"isRunning"`
 	// Pid is the PID of the exec session's process.
 	// Will be set to 0 if the exec session is not running.
 	Pid int `json:"Pid"`

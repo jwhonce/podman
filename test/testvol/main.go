@@ -59,7 +59,7 @@ func before(cmd *cobra.Command, args []string) error {
 
 func main() {
 	if err := rootCmd.Execute(); err != nil {
-		logrus.Errorf("Running volume plugin: %v", err)
+		logrus.Errorf("isRunning volume plugin: %v", err)
 		os.Exit(1)
 	}
 

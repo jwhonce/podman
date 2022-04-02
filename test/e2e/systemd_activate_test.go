@@ -91,7 +91,7 @@ var _ = Describe("Systemd activate", func() {
 		apiSession = podmanRemote("start", containerName)
 		Expect(apiSession).Should(Exit(0))
 
-		apiSession = podmanRemote("inspect", "--format={{.State.Running}}", containerName)
+		apiSession = podmanRemote("inspect", "--format={{.State.isRunning}}", containerName)
 		Expect(apiSession).Should(Exit(0))
 		Expect(apiSession.OutputToString()).To(Equal("true"))
 
@@ -100,7 +100,7 @@ var _ = Describe("Systemd activate", func() {
 		time.Sleep(2)
 		Eventually(activateSession).Should(Exit(0))
 
-		abiSession := podman("inspect", "--format={{.State.Running}}", containerName)
+		abiSession := podman("inspect", "--format={{.State.isRunning}}", containerName)
 		Expect(abiSession).To(Exit(0))
 		Expect(abiSession.OutputToString()).To(Equal("true"))
 	})

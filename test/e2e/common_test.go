@@ -501,7 +501,7 @@ func (p *PodmanTestIntegration) BuildImageWithLabel(dockerfile, imageName string
 // PodmanPID execs podman and returns its PID
 func (p *PodmanTestIntegration) PodmanPID(args []string) (*PodmanSessionIntegration, int) {
 	podmanOptions := p.MakeOptions(args, false, false)
-	fmt.Printf("Running: %s %s\n", p.PodmanBinary, strings.Join(podmanOptions, " "))
+	fmt.Printf("isRunning: %s %s\n", p.PodmanBinary, strings.Join(podmanOptions, " "))
 
 	command := exec.Command(p.PodmanBinary, podmanOptions...)
 	session, err := Start(command, GinkgoWriter, GinkgoWriter)
@@ -1030,7 +1030,7 @@ func ncz(port int) bool {
 	timeout := 500 * time.Millisecond
 	for i := 0; i < 5; i++ {
 		ncCmd := []string{"-z", "localhost", fmt.Sprintf("%d", port)}
-		fmt.Printf("Running: nc %s\n", strings.Join(ncCmd, " "))
+		fmt.Printf("isRunning: nc %s\n", strings.Join(ncCmd, " "))
 		check := SystemExec("nc", ncCmd)
 		if check.ExitCode() == 0 {
 			return true

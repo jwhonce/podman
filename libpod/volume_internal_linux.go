@@ -100,7 +100,7 @@ func (v *Volume) mount() error {
 	mountArgs = append(mountArgs, volDevice, v.config.MountPoint)
 	mountCmd := exec.Command(mountPath, mountArgs...)
 
-	logrus.Debugf("Running mount command: %s %s", mountPath, strings.Join(mountArgs, " "))
+	logrus.Debugf("isRunning mount command: %s %s", mountPath, strings.Join(mountArgs, " "))
 	if output, err := mountCmd.CombinedOutput(); err != nil {
 		logrus.Debugf("Mount %v failed with %v", mountCmd, err)
 		return errors.Errorf(string(output))

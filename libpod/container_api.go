@@ -680,7 +680,7 @@ func (c *Container) Batch(batchFunc func(*Container) error) error {
 // container status, and instead relies upon exit files created by conmon.
 // This can cause a disconnect between running state and what Podman sees in
 // cases where Conmon was killed unexpected, or runc was upgraded.
-// Running a manual Sync() ensures that container state will be correct in
+// isRunning a manual Sync() ensures that container state will be correct in
 // such situations.
 func (c *Container) Sync() error {
 	if !c.batched {

@@ -14,7 +14,7 @@ var _ = Describe("PodmanSession test", func() {
 		session.WaitWithDefaultTimeout()
 	})
 
-	It("Test OutputToString", func() {
+	It("Test outputToString", func() {
 		Expect(session.OutputToString()).To(Equal("PodmanSession test Podman Session"))
 	})
 

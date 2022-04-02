@@ -783,7 +783,7 @@ func (r *Runtime) removeContainer(ctx context.Context, c *Container, force, remo
 // returns the full ID of the evicted container and any error encountered.
 // It should be used to remove a container when obtaining a Container struct
 // pointer has failed.
-// Running container will not be stopped.
+// isRunning container will not be stopped.
 // If removeVolume is specified, named volumes used by the container will
 // be removed also if and only if the container is the sole user.
 func (r *Runtime) EvictContainer(ctx context.Context, idOrName string, removeVolume bool) (string, error) {

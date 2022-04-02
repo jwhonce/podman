@@ -2772,7 +2772,7 @@ MemoryReservation: {{ .HostConfig.MemoryReservation }}`})
 		kube.WaitWithDefaultTimeout()
 		Expect(kube).Should(Exit(0))
 
-		inspect := podmanTest.Podman([]string{"inspect", getCtrNameInPod(pod), "--format", "{{ .State.Running }}"})
+		inspect := podmanTest.Podman([]string{"inspect", getCtrNameInPod(pod), "--format", "{{ .State.isRunning }}"})
 		inspect.WaitWithDefaultTimeout()
 		Expect(inspect).Should(Exit(0))
 		Expect(inspect.OutputToString()).To(Equal("false"))
@@ -2886,7 +2886,7 @@ spec:
 		inspectPod := podmanTest.Podman([]string{"inspect", podName + "-pod-0", "--format", "'{{ .State }}'"})
 		inspectPod.WaitWithDefaultTimeout()
 		Expect(inspectPod).Should(Exit(0))
-		Expect(inspectPod.OutputToString()).To(ContainSubstring(`Running`))
+		Expect(inspectPod.OutputToString()).To(ContainSubstring(`isRunning`))
 
 		inspectMounts := podmanTest.Podman([]string{"inspect", podName + "-pod-0-" + ctrName, "--format", "{{ (index .Mounts 0).Type }}:{{ (index .Mounts 0).Name }}"})
 		inspectMounts.WaitWithDefaultTimeout()
@@ -2954,7 +2954,7 @@ spec:
 			inspect := podmanTest.Podman([]string{"inspect", n, "--format", "'{{ .State }}'"})
 			inspect.WaitWithDefaultTimeout()
 			Expect(inspect).Should(Exit(0))
-			Expect(inspect.OutputToString()).To(ContainSubstring(`Running`))
+			Expect(inspect.OutputToString()).To(ContainSubstring(`isRunning`))
 		}
 	})
 

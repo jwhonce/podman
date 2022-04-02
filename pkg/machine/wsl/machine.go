@@ -702,7 +702,7 @@ func withUser(s string, user string) string {
 }
 
 func runCmdPassThrough(name string, arg ...string) error {
-	logrus.Debugf("Running command: %s %v", name, arg)
+	logrus.Debugf("isRunning command: %s %v", name, arg)
 	cmd := exec.Command(name, arg...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
@@ -711,7 +711,7 @@ func runCmdPassThrough(name string, arg ...string) error {
 }
 
 func runCmdPassThroughTee(out io.Writer, name string, arg ...string) error {
-	logrus.Debugf("Running command: %s %v", name, arg)
+	logrus.Debugf("isRunning command: %s %v", name, arg)
 
 	// TODO - Perhaps improve this with a conpty pseudo console so that
 	//        dism installer text bars mirror console behavior (redraw)
@@ -723,7 +723,7 @@ func runCmdPassThroughTee(out io.Writer, name string, arg ...string) error {
 }
 
 func pipeCmdPassThrough(name string, input string, arg ...string) error {
-	logrus.Debugf("Running command: %s %v", name, arg)
+	logrus.Debugf("isRunning command: %s %v", name, arg)
 	cmd := exec.Command(name, arg...)
 	cmd.Stdin = strings.NewReader(input)
 	cmd.Stdout = os.Stdout

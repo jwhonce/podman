@@ -12,7 +12,7 @@ const (
 	PodStatePaused = "Paused"
 	// PodStateRunning indicates that all of the containers in the pod are
 	// running.
-	PodStateRunning = "Running"
+	PodStateRunning = "isRunning"
 	// PodStateDegraded indicates that at least one, but not all, of the
 	// containers in the pod are running.
 	PodStateDegraded = "Degraded"

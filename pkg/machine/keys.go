@@ -66,6 +66,6 @@ func generatekeysPrefix(dir string, file string, passThru bool, prefix ...string
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 	}
-	logrus.Debugf("Running wsl cmd %v in dir: %s", args, dir)
+	logrus.Debugf("isRunning wsl cmd %v in dir: %s", args, dir)
 	return cmd.Run()
 }

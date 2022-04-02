@@ -43,7 +43,7 @@ type FcosDownload struct {
 }
 
 func NewFcosDownloader(vmType, vmName, imageStream string) (DistributionDownload, error) {
-	info, err := getFCOSDownload(imageStream)
+	info, err := GetFCOSDownload(imageStream)
 	if err != nil {
 		return nil, err
 	}
@@ -139,7 +139,7 @@ func getStreamURL(streamType string) url2.URL {
 
 // This should get Exported and stay put as it will apply to all fcos downloads
 // getFCOS parses fedoraCoreOS's stream and returns the image download URL and the release version
-func getFCOSDownload(imageStream string) (*fcosDownloadInfo, error) {
+func GetFCOSDownload(imageStream string) (*fcosDownloadInfo, error) {
 	var (
 		fcosstable stream.Stream
 		altMeta    release.Release

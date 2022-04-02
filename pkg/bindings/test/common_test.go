@@ -124,7 +124,7 @@ func (b *bindingTest) runPodman(command []string) *gexec.Session {
 	}
 	cmd = append(cmd, command...)
 	c := exec.Command(podmanBinary, cmd...)
-	fmt.Printf("Running: %s %s\n", podmanBinary, strings.Join(cmd, " "))
+	fmt.Printf("isRunning: %s %s\n", podmanBinary, strings.Join(cmd, " "))
 	session, err := gexec.Start(c, ginkgo.GinkgoWriter, ginkgo.GinkgoWriter)
 	if err != nil {
 		panic(errors.Errorf("unable to run podman command: %q", cmd))

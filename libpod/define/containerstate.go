@@ -51,7 +51,7 @@ func (t ContainerStatus) String() string {
 	case ContainerStateCreated:
 		// Docker does not have an equivalent to this state, so give it
 		// a clear name. Most of the time this is a purely transitory
-		// state between Configured and Running so we don't expect to
+		// state between Configured and isRunning so we don't expect to
 		// see it much anyways.
 		return "initialized"
 	case ContainerStateRunning:

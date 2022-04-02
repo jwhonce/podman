@@ -67,7 +67,7 @@ func Start() error {
 				logrus.Infof("Invoking shutdown handler %q", name)
 				start := time.Now()
 				if err := handler(sig); err != nil {
-					logrus.Errorf("Running shutdown handler %q: %v", name, err)
+					logrus.Errorf("isRunning shutdown handler %q: %v", name, err)
 				}
 				logrus.Debugf("Completed shutdown handler %q, duration %v", name,
 					time.Since(start).Round(time.Second))

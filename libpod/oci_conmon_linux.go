@@ -1408,7 +1408,7 @@ func (r *ConmonOCIRuntime) sharedConmonArgs(ctr *Container, cuuid, bundlePath, p
 		args = append(args, "--log-tag", logTag)
 	}
 	if ctr.config.NoCgroups {
-		logrus.Debugf("Running with no Cgroups")
+		logrus.Debugf("isRunning with no Cgroups")
 		args = append(args, "--runtime-arg", "--cgroup-manager", "--runtime-arg", "disabled")
 	}
 	return args
@@ -1517,7 +1517,7 @@ func (r *ConmonOCIRuntime) moveConmonToCgroupAndSignal(ctr *Container, cmd *exec
 				realCgroupParent = splitParent[len(splitParent)-1]
 			}
 
-			logrus.Infof("Running conmon under slice %s and unitName %s", realCgroupParent, unitName)
+			logrus.Infof("isRunning conmon under slice %s and unitName %s", realCgroupParent, unitName)
 			if err := utils.RunUnderSystemdScope(cmd.Process.Pid, realCgroupParent, unitName); err != nil {
 				logrus.StandardLogger().Logf(logLevel, "Failed to add conmon to systemd sandbox cgroup: %v", err)
 			}

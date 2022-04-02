@@ -951,7 +951,7 @@ func generateKubeSecurityContext(c *Container) (*v1.SecurityContext, error) {
 
 	var capabilities *v1.Capabilities
 	if !privileged {
-		// Running privileged adds all caps.
+		// isRunning privileged adds all caps.
 		newCaps, err := capAddDrop(c.config.Spec.Process.Capabilities)
 		if err != nil {
 			return nil, err

@@ -317,7 +317,7 @@ func (p *Pod) Pause(ctx context.Context) (map[string]error, error) {
 }
 
 // Unpause unpauses all containers within a pod that are running.
-// Only paused containers will be unpaused. Running, stopped, or created
+// Only paused containers will be unpaused. isRunning, stopped, or created
 // containers will be ignored.
 // All containers are unpaused independently. An error unpausing one container
 // will not prevent other containers being unpaused.

@@ -359,7 +359,7 @@ var _ = Describe("Podman prune", func() {
 		// One Pod should not be pruned as it was running
 		Expect(podmanTest.NumberOfPods()).To(Equal(1))
 
-		// Running pods infra container should not be pruned.
+		// isRunning pods infra container should not be pruned.
 		Expect(podmanTest.NumberOfContainers()).To(Equal(1))
 
 		// Image should not be pruned and number should be same.

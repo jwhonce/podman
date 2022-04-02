@@ -76,7 +76,6 @@ func (p *Provider) NewMachine(opts machine.InitOptions) (machine.VM, error) {
 		return nil, err
 	}
 	vm.IgnitionFilePath = *ignitionFile
-
 	imagePath, err := NewMachineFile(opts.ImagePath, nil)
 	if err != nil {
 		return nil, err
@@ -373,7 +372,6 @@ func (v *MachineVM) Init(opts machine.InitOptions) (bool, error) {
 	if err := v.writeConfig(); err != nil {
 		return false, fmt.Errorf("writing JSON file: %w", err)
 	}
-
 	// User has provided ignition file so keygen
 	// will be skipped.
 	if len(opts.IgnitionPath) < 1 {
@@ -387,7 +385,6 @@ func (v *MachineVM) Init(opts machine.InitOptions) (bool, error) {
 	if err := v.prepare(); err != nil {
 		return false, err
 	}
-
 	originalDiskSize, err := getDiskSize(v.getImageFile())
 	if err != nil {
 		return false, err
@@ -504,14 +501,22 @@ func (v *MachineVM) Start(name string, _ machine.StartOptions) error {
 	if err != nil {
 		return err
 	}
-
 	fd, err := qemuSocketConn.(*net.UnixConn).File()
 	if err != nil {
 		return err
 	}
 
+	dnr, err := os.Open("/dev/null")
+	if err != nil {
+		return err
+	}
+	dnw, err := os.Open("/dev/null")
+	if err != nil {
+		return err
+	}
+
 	attr := new(os.ProcAttr)
-	files := []*os.File{os.Stdin, os.Stdout, os.Stderr, fd}
+	files := []*os.File{dnw, dnr, dnr, fd}
 	attr.Files = files
 	logrus.Debug(v.CmdLine)
 	cmd := v.CmdLine
@@ -566,7 +571,10 @@ func (v *MachineVM) Start(name string, _ machine.StartOptions) error {
 	if err != nil {
 		return err
 	}
-
+	conn.Close()
+	dnr.Close()
+	dnw.Close()
+	fd.Close()
 	if len(v.Mounts) > 0 {
 		running, err := v.isRunning()
 		if err != nil {
@@ -621,7 +629,7 @@ func (v *MachineVM) Start(name string, _ machine.StartOptions) error {
 	return nil
 }
 
-func (v *MachineVM) checkStatus(monitor *qmp.SocketMonitor) (machine.QemuMachineStatus, error) {
+func (v *MachineVM) checkStatus(monitor *qmp.SocketMonitor) (machine.MachineStatus, error) {
 	// this is the format returned from the monitor
 	// {"return": {"status": "running", "singlestep": false, "running": true}}
 
@@ -845,7 +853,7 @@ func (v *MachineVM) Remove(_ string, opts machine.RemoveOptions) (string, func()
 	confirmationMessage += "\n"
 	return confirmationMessage, func() error {
 		for _, f := range files {
-			if err := os.Remove(f); err != nil {
+			if err := os.Remove(f); err != nil && !errors.Is(err, os.ErrNotExist) {
 				logrus.Error(err)
 			}
 		}
@@ -853,19 +861,19 @@ func (v *MachineVM) Remove(_ string, opts machine.RemoveOptions) (string, func()
 	}, nil
 }
 
-func (v *MachineVM) isRunning() (bool, error) {
+func (v *MachineVM) State() (machine.MachineStatus, error) {
 	// Check if qmp socket path exists
 	if _, err := os.Stat(v.QMPMonitor.Address.GetPath()); os.IsNotExist(err) {
-		return false, nil
+		return "", nil
 	}
 	// Check if we can dial it
 	monitor, err := qmp.NewSocketMonitor(v.QMPMonitor.Network, v.QMPMonitor.Address.GetPath(), v.QMPMonitor.Timeout)
 	if err != nil {
 		// FIXME: this error should probably be returned
-		return false, nil // nolint: nilerr
+		return "", nil // nolint: nilerr
 	}
 	if err := monitor.Connect(); err != nil {
-		return false, err
+		return "", err
 	}
 	defer func() {
 		if err := monitor.Disconnect(); err != nil {
@@ -873,7 +881,11 @@ func (v *MachineVM) isRunning() (bool, error) {
 		}
 	}()
 	// If there is a monitor, lets see if we can query state
-	state, err := v.checkStatus(monitor)
+	return v.checkStatus(monitor)
+}
+
+func (v *MachineVM) isRunning() (bool, error) {
+	state, err := v.State()
 	if err != nil {
 		return false, err
 	}
@@ -1080,8 +1092,8 @@ func (v *MachineVM) startHostNetworking() (string, apiForwardingState, error) {
 
 	attr := new(os.ProcAttr)
 	// Pass on stdin, stdout, stderr
-	files := []*os.File{os.Stdin, os.Stdout, os.Stderr}
-	attr.Files = files
+	//files := []*os.File{os.Stdin, os.Stdout, os.Stderr}
+	//attr.Files = files
 	cmd := []string{binary}
 	cmd = append(cmd, []string{"-listen-qemu", fmt.Sprintf("unix://%s", v.QMPMonitor.Address.GetPath()), "-pid-file", v.PidFilePath.GetPath()}...)
 	// Add the ssh port

@@ -12,12 +12,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/sirupsen/logrus"
-
 	"github.com/containers/storage/pkg/parsers/kernel"
 	. "github.com/onsi/ginkgo"       //nolint:golint,stylecheck
 	. "github.com/onsi/gomega"       //nolint:golint,stylecheck
 	. "github.com/onsi/gomega/gexec" //nolint:golint,stylecheck
+	"github.com/sirupsen/logrus"
 )
 
 type NetworkBackend int
@@ -102,9 +101,9 @@ func (p *PodmanTest) PodmanAsUserBase(args []string, uid, gid uint32, cwd string
 	}
 
 	if env == nil {
-		fmt.Printf("Running: %s %s\n", strings.Join(runCmd, " "), strings.Join(podmanOptions, " "))
+		fmt.Printf("isRunning: %s %s\n", strings.Join(runCmd, " "), strings.Join(podmanOptions, " "))
 	} else {
-		fmt.Printf("Running: (env: %v) %s %s\n", env, strings.Join(runCmd, " "), strings.Join(podmanOptions, " "))
+		fmt.Printf("isRunning: (env: %v) %s %s\n", env, strings.Join(runCmd, " "), strings.Join(podmanOptions, " "))
 	}
 	if uid != 0 || gid != 0 {
 		pythonCmd := fmt.Sprintf("import os; import sys; uid = %d; gid = %d; cwd = '%s'; os.setgid(gid); os.setuid(uid); os.chdir(cwd) if len(cwd)>0 else True; os.execv(sys.argv[1], sys.argv[1:])", gid, uid, cwd)

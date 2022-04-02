@@ -1408,7 +1408,7 @@ const (
 	PodPending PodPhase = "Pending"
 	// PodRunning means the pod has been bound to a node and all of the containers have been started.
 	// At least one container is still running or is in the process of being restarted.
-	PodRunning PodPhase = "Running"
+	PodRunning PodPhase = "isRunning"
 	// PodSucceeded means that all containers in the pod have voluntarily terminated
 	// with a container exit code of 0, and the system is not going to restart any of these containers.
 	PodSucceeded PodPhase = "Succeeded"
@@ -2398,7 +2398,7 @@ type PodStatus struct {
 	// Pending: The pod has been accepted by the Kubernetes system, but one or more of the
 	// container images has not been created. This includes time before being scheduled as
 	// well as time spent downloading images over the network, which could take a while.
-	// Running: The pod has been bound to a node, and all of the containers have been created.
+	// isRunning: The pod has been bound to a node, and all of the containers have been created.
 	// At least one container is still running, or is in the process of starting or restarting.
 	// Succeeded: All containers in the pod have terminated in success, and will not be restarted.
 	// Failed: All containers in the pod have terminated, and at least one container has

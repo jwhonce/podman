@@ -21,7 +21,7 @@ import (
 var (
 	rmDescription = `Removes one or more containers from the host. The container name or ID can be used.
 
-  Command does not remove images. Running or unusable containers will not be removed without the -f option.`
+  Command does not remove images. isRunning or unusable containers will not be removed without the -f option.`
 	rmCommand = &cobra.Command{
 		Use:   "rm [options] CONTAINER [CONTAINER...]",
 		Short: "Remove one or more containers",

@@ -56,7 +56,8 @@ BUILDTAGS ?= \
 	$(shell hack/systemd_tag.sh) \
 	$(shell hack/libsubid_tag.sh) \
 	exclude_graphdriver_devicemapper \
-	seccomp
+	seccomp \
+	native_rootless
 PYTHON ?= $(shell command -v python3 python|head -n1)
 PKG_MANAGER ?= $(shell command -v dnf yum|head -n1)
 # ~/.local/bin is not in PATH on all systems

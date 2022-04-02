@@ -484,7 +484,7 @@ entrypoint ["/fromimage"]
 		status2 := podmanTest.Podman([]string{"pod", "inspect", "--format", "{{ .State }}", podName})
 		status2.WaitWithDefaultTimeout()
 		Expect(status2).Should(Exit(0))
-		Expect(status2.OutputToString()).To(ContainSubstring("Running"))
+		Expect(status2.OutputToString()).To(ContainSubstring("isRunning"))
 
 		ctr2 := podmanTest.Podman([]string{"create", "--pod", podName, ALPINE, "top"})
 		ctr2.WaitWithDefaultTimeout()

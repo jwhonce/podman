@@ -1548,7 +1548,7 @@ func (c *Container) restore(ctx context.Context, options ContainerCheckpointOpti
 	}
 
 	if options.Pod != "" {
-		// Running in a Pod means that we have to change all namespace settings to
+		// isRunning in a Pod means that we have to change all namespace settings to
 		// the ones from the infrastructure container.
 		pod, err := c.runtime.LookupPod(options.Pod)
 		if err != nil {
