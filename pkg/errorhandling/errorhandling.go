@@ -1,13 +1,25 @@
 package errorhandling
 
 import (
+	"fmt"
 	"os"
 	"strings"
+	"unsafe"
 
 	"github.com/hashicorp/go-multierror"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
+
+func init() {
+	jsoniter.RegisterTypeDecoderFunc("[]error", UnmarshalErrorSliceJSON)
+	jsoniter.RegisterTypeDecoderFunc("error", UnmarshalErrorJSON)
+	jsoniter.RegisterTypeEncoderFunc("[]error", MarshalErrorSliceJSON, MarshalErrorSliceJSONIsEmpty)
+	jsoniter.RegisterTypeEncoderFunc("error", MarshalErrorJSON, MarshalErrorJSONIsEmpty)
+}
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 // JoinErrors converts the error slice into a single human-readable error.
 func JoinErrors(errs []error) error {
@@ -33,7 +45,7 @@ func JoinErrors(errs []error) error {
 	return errors.New(strings.TrimSpace(finalErr.Error()))
 }
 
-// ErrorsToString converts the slice of errors into a slice of corresponding
+// ErrorsToStrings converts the slice of errors into a slice of corresponding
 // error messages.
 func ErrorsToStrings(errs []error) []string {
 	if len(errs) == 0 {
@@ -86,7 +98,7 @@ func Contains(err error, sub error) bool {
 // PodConflictErrorModel is used in remote connections with podman
 type PodConflictErrorModel struct {
 	Errs []string
-	Id   string //nolint
+	Id   string // nolint
 }
 
 // ErrorModel is used in remote connections with podman
@@ -119,4 +131,84 @@ func (e PodConflictErrorModel) Error() string {
 
 func (e PodConflictErrorModel) Code() int {
 	return 409
+}
+
+// MarshalErrorJSON writes error to stream as string
+func MarshalErrorJSON(ptr unsafe.Pointer, stream *jsoniter.Stream) {
+	p := *((*error)(ptr))
+	if p == nil {
+		stream.WriteNil()
+	} else {
+		stream.WriteString(p.Error())
+	}
+}
+
+// MarshalErrorSliceJSON writes []error to stream as []string JSON blob
+func MarshalErrorSliceJSON(ptr unsafe.Pointer, stream *jsoniter.Stream) {
+	a := *((*[]error)(ptr))
+	switch {
+	case a == nil:
+		stream.WriteNil()
+	case len(a) == 0:
+		stream.WriteEmptyArray()
+	default:
+		stream.WriteArrayStart()
+		for i, e := range a {
+			if i > 0 {
+				stream.WriteMore()
+			}
+			switch e {
+			case nil:
+				stream.WriteNil()
+			default:
+				stream.WriteString(e.Error())
+			}
+		}
+		stream.WriteArrayEnd()
+	}
+}
+
+// MarshalErrorJSONIsEmpty return true if ptr == nil
+func MarshalErrorJSONIsEmpty(ptr unsafe.Pointer) bool {
+	return *((*error)(ptr)) == nil
+}
+
+// MarshalErrorSliceJSONIsEmpty return true if slice is empty
+func MarshalErrorSliceJSONIsEmpty(ptr unsafe.Pointer) bool {
+	return len(*((*[]error)(ptr))) <= 0
+}
+
+// UnmarshalErrorJSON decodes string as error
+// Note: a _NEW_ error is created with matching text, therefore
+//	MarshalErrorJSON(&os.ErrNotExist, stream)
+//	UnmarshalErrorJSON(&err, stream)
+//	err != os.ErrNotExist && err.Error() == os.ErrNotExist.Error()
+func UnmarshalErrorJSON(ptr unsafe.Pointer, iter *jsoniter.Iterator) {
+	switch iter.WhatIsNext() {
+	case jsoniter.StringValue:
+		*(*error)(ptr) = fmt.Errorf(iter.ReadString())
+	case jsoniter.NilValue:
+		iter.ReadNil()
+		*(*error)(ptr) = nil
+	default:
+		iter.ReportError("podman decode error", "unsupported type in payload")
+	}
+}
+
+// UnmarshalErrorSliceJSON decodes a slice of strings as a slice of errors
+func UnmarshalErrorSliceJSON(ptr unsafe.Pointer, iter *jsoniter.Iterator) {
+	slice := make([]error, 0)
+	for iter.ReadArray() {
+		switch iter.WhatIsNext() {
+		case jsoniter.StringValue:
+			slice = append(slice, fmt.Errorf(iter.ReadString()))
+		case jsoniter.NilValue:
+			iter.ReadNil()
+			slice = append(slice, nil)
+		default:
+			iter.ReportError("podman decode error", "unsupported type in payload")
+			return
+		}
+	}
+	*((*[]error)(ptr)) = slice
 }

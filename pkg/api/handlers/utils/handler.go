@@ -7,7 +7,6 @@ import (
 	"net/url"
 	"os"
 	"strings"
-	"unsafe"
 
 	"github.com/blang/semver"
 	"github.com/containers/podman/v4/version"
@@ -22,6 +21,8 @@ var (
 	ErrVersionNotGiven = errors.New("version not given in URL path")
 	// ErrVersionNotSupported returned when given version is too old
 	ErrVersionNotSupported = errors.New("given version is not supported")
+	// Override standard library json package
+	json = jsoniter.ConfigCompatibleWithStandardLibrary
 )
 
 // IsLibpodRequest returns true if the request related to a libpod endpoint
@@ -110,49 +111,6 @@ func WriteResponse(w http.ResponseWriter, code int, value interface{}) {
 	}
 }
 
-func init() {
-	jsoniter.RegisterTypeEncoderFunc("error", MarshalErrorJSON, MarshalErrorJSONIsEmpty)
-	jsoniter.RegisterTypeEncoderFunc("[]error", MarshalErrorSliceJSON, MarshalErrorSliceJSONIsEmpty)
-}
-
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
-
-// MarshalErrorJSON writes error to stream as string
-func MarshalErrorJSON(ptr unsafe.Pointer, stream *jsoniter.Stream) {
-	p := *((*error)(ptr))
-	if p == nil {
-		stream.WriteNil()
-	} else {
-		stream.WriteString(p.Error())
-	}
-}
-
-// MarshalErrorSliceJSON writes []error to stream as []string JSON blob
-func MarshalErrorSliceJSON(ptr unsafe.Pointer, stream *jsoniter.Stream) {
-	a := *((*[]error)(ptr))
-	switch {
-	case len(a) == 0:
-		stream.WriteNil()
-	default:
-		stream.WriteArrayStart()
-		for i, e := range a {
-			if i > 0 {
-				stream.WriteMore()
-			}
-			stream.WriteString(e.Error())
-		}
-		stream.WriteArrayEnd()
-	}
-}
-
-func MarshalErrorJSONIsEmpty(ptr unsafe.Pointer) bool {
-	return *((*error)(ptr)) == nil
-}
-
-func MarshalErrorSliceJSONIsEmpty(ptr unsafe.Pointer) bool {
-	return len(*((*[]error)(ptr))) <= 0
-}
-
 // WriteJSON writes an interface value encoded as JSON to w
 func WriteJSON(w http.ResponseWriter, code int, value interface{}) {
 	// FIXME: we don't need to write the header in all/some circumstances.
@@ -160,7 +118,6 @@ func WriteJSON(w http.ResponseWriter, code int, value interface{}) {
 	w.WriteHeader(code)
 
 	coder := json.NewEncoder(w)
-	coder.SetEscapeHTML(true)
 	if err := coder.Encode(value); err != nil {
 		logrus.Errorf("Unable to write json: %q", err)
 	}

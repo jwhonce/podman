@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/blang/semver"
+	_ "github.com/containers/podman/v4/pkg/errorhandling" // nolint:golint  imported into pkg for side effect
 	"github.com/containers/podman/v4/pkg/terminal"
 	"github.com/containers/podman/v4/version"
 	"github.com/pkg/errors"

@@ -1,10 +1,10 @@
 package bindings
 
 import (
-	"encoding/json"
 	"io/ioutil"
 
 	"github.com/containers/podman/v4/pkg/errorhandling"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
 )
 
@@ -13,7 +13,7 @@ var (
 )
 
 func handleError(data []byte, unmarshalErrorInto interface{}) error {
-	if err := json.Unmarshal(data, unmarshalErrorInto); err != nil {
+	if err := jsoniter.Unmarshal(data, unmarshalErrorInto); err != nil {
 		return err
 	}
 	return unmarshalErrorInto.(error)
@@ -34,7 +34,7 @@ func (h APIResponse) ProcessWithError(unmarshalInto interface{}, unmarshalErrorI
 	}
 	if h.IsSuccess() || h.IsRedirection() {
 		if unmarshalInto != nil {
-			return json.Unmarshal(data, unmarshalInto)
+			return jsoniter.Unmarshal(data, unmarshalInto)
 		}
 		return nil
 	}

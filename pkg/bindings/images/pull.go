@@ -2,7 +2,6 @@ package images
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -15,6 +14,7 @@ import (
 	"github.com/containers/podman/v4/pkg/bindings"
 	"github.com/containers/podman/v4/pkg/domain/entities"
 	"github.com/containers/podman/v4/pkg/errorhandling"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
 )
 
@@ -64,7 +64,7 @@ func Pull(ctx context.Context, rawImage string, options *PullOptions) ([]string,
 		stderr = ioutil.Discard
 	}
 
-	dec := json.NewDecoder(response.Body)
+	dec := jsoniter.NewDecoder(response.Body)
 	var images []string
 	var pullErrors []error
 	for {

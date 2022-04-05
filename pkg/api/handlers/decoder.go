@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"reflect"
 	"syscall"
 	"time"
@@ -9,8 +8,11 @@ import (
 	"github.com/containers/podman/v4/libpod/define"
 	"github.com/containers/podman/v4/pkg/util"
 	"github.com/gorilla/schema"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/sirupsen/logrus"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 // NewAPIDecoder returns a configured schema.Decoder
 func NewAPIDecoder() *schema.Decoder {

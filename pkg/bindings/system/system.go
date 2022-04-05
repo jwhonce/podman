@@ -2,7 +2,6 @@ package system
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -11,6 +10,7 @@ import (
 	"github.com/containers/podman/v4/libpod/define"
 	"github.com/containers/podman/v4/pkg/bindings"
 	"github.com/containers/podman/v4/pkg/domain/entities"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -41,7 +41,7 @@ func Events(ctx context.Context, eventChan chan entities.Event, cancelChan chan 
 		}()
 	}
 
-	dec := json.NewDecoder(response.Body)
+	dec := jsoniter.NewDecoder(response.Body)
 	for err = (error)(nil); err == nil; {
 		var e = entities.Event{}
 		err = dec.Decode(&e)

@@ -4,7 +4,6 @@ import (
 	"archive/tar"
 	"compress/gzip"
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"io/fs"
@@ -298,7 +297,7 @@ func Build(ctx context.Context, containerFiles []string, options entities.BuildO
 	}
 
 	if len(options.CommonBuildOpts.Ulimit) > 0 {
-		ulimitsJSON, err := json.Marshal(options.CommonBuildOpts.Ulimit)
+		ulimitsJSON, err := jsoniter.Marshal(options.CommonBuildOpts.Ulimit)
 		if err != nil {
 			return nil, err
 		}
@@ -394,7 +393,7 @@ func Build(ctx context.Context, containerFiles []string, options entities.BuildO
 		newContainerFiles = append(newContainerFiles, filepath.ToSlash(containerfile))
 	}
 	if len(newContainerFiles) > 0 {
-		cFileJSON, err := json.Marshal(newContainerFiles)
+		cFileJSON, err := jsoniter.Marshal(newContainerFiles)
 		if err != nil {
 			return nil, err
 		}
@@ -489,7 +488,7 @@ func Build(ctx context.Context, containerFiles []string, options entities.BuildO
 		}
 	}
 
-	dec := json.NewDecoder(body)
+	dec := jsoniter.NewDecoder(body)
 
 	var id string
 	for {

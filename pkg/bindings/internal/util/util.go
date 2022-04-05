@@ -56,7 +56,6 @@ func ToParams(o interface{}) (url.Values, error) {
 	if o == nil || reflect.ValueOf(o).IsNil() {
 		return params, nil
 	}
-	json := jsoniter.ConfigCompatibleWithStandardLibrary
 	s := reflect.ValueOf(o)
 	if reflect.Ptr == s.Kind() {
 		s = s.Elem()
@@ -94,7 +93,7 @@ func ToParams(o interface{}) (url.Values, error) {
 			for iter.Next() {
 				lowerCaseKeys[iter.Key().Interface().(string)] = iter.Value().Interface()
 			}
-			s, err := json.MarshalToString(lowerCaseKeys)
+			s, err := jsoniter.MarshalToString(lowerCaseKeys)
 			if err != nil {
 				return nil, err
 			}

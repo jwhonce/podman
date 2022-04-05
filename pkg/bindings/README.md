@@ -239,3 +239,11 @@ $
 
 You can also verify that the information being passed back and forth is correct by putting
 with a tool like `socat`, which can dump what the socket is seeing.
+
+## Developer Notes
+
+1. Use of [jsoniter]("github.com/json-iterator/go") package
+   These bindings use the jsoniter package and register custom encoders and decoders for `error` and
+   `[]error` types. The jsoniter package holds this configuration in global variables, therefore
+   overriding them in your code may break the API. This does not impact your use of the
+   `encoding/json` package.

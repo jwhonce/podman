@@ -96,7 +96,7 @@ func ExecStart(ctx context.Context, sessionID string, options *ExecStartOptions)
 	}{
 		Detach: true,
 	}
-	bodyJSON, err := json.Marshal(body)
+	bodyJSON, err := jsoniter.Marshal(body)
 	if err != nil {
 		return err
 	}
