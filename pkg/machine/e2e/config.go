@@ -72,8 +72,8 @@ func (ms *machineSession) outputToString() string {
 	return strings.Join(fields, " ")
 }
 
-// new constructor for machine test builders
-func new() (*machineTestBuilder, error) {
+// newBuilder constructor for machine test builders
+func newBuilder() (*machineTestBuilder, error) {
 	cwd, err := os.Getwd()
 	if err != nil {
 		return nil, err
@@ -95,7 +95,7 @@ func (m *machineTestBuilder) setName(name string) MachineTestBuilder {
 
 // setCmd takes a machineCommand struct and assembles a cmd line
 // representation of the podman machine command
-func (m *machineTestBuilder) setCmd(mc *machineCommand) MachineTestBuilder {
+func (m *machineTestBuilder) setCmd(mc machineCommand) MachineTestBuilder {
 	// If no name for the machine exists, we set a random name.
 	if len(m.names) < 1 {
 		m.names = []string{randomString(12)}

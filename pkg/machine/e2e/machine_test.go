@@ -84,7 +84,7 @@ func setup() (string, *machineTestBuilder) {
 	if err := os.Setenv("HOME", homeDir); err != nil {
 		Fail("failed to set home dir")
 	}
-	mb, err := new()
+	mb, err := newBuilder()
 	if err != nil {
 		Fail(fmt.Sprintf("failed to create machine test: %q", err))
 	}
@@ -104,7 +104,7 @@ func setup() (string, *machineTestBuilder) {
 }
 
 func teardown(origHomeDir string, testDir string, mb *machineTestBuilder) {
-	r := rmMachine{}
+	r := new(rmMachine)
 	if _, err := mb.setCmd(r.withForce()).run(); err != nil {
 		fmt.Printf("error occured rm'ing machine: %q\n", err)
 	}

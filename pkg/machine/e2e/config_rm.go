@@ -1,6 +1,7 @@
 package e2e
 
 type rmMachine struct {
+	machineCommand
 	/*
 	  -f, --force           Stop and do not prompt before rming
 	      --save-ignition   Do not delete ignition file
@@ -16,7 +17,7 @@ type rmMachine struct {
 	cmd []string
 }
 
-func (i rmMachine) buildCmd(names []string) []string {
+func (i *rmMachine) buildCmd(names []string) []string {
 	cmd := []string{"machine", "rm"}
 	if i.force {
 		cmd = append(cmd, "--force")
@@ -35,22 +36,22 @@ func (i rmMachine) buildCmd(names []string) []string {
 	return cmd
 }
 
-func (i rmMachine) withForce() machineCommand {
+func (i *rmMachine) withForce() *rmMachine {
 	i.force = true
 	return i
 }
 
-func (i rmMachine) withSaveIgnition() machineCommand {
+func (i *rmMachine) withSaveIgnition() *rmMachine {
 	i.saveIgnition = true
 	return i
 }
 
-func (i rmMachine) withSaveImage() machineCommand {
+func (i *rmMachine) withSaveImage() *rmMachine {
 	i.saveImage = true
 	return i
 }
 
-func (i rmMachine) withSaveKeys() machineCommand {
+func (i *rmMachine) withSaveKeys() *rmMachine {
 	i.saveKeys = true
 	return i
 }
